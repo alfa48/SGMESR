@@ -104,22 +104,7 @@ class PainelController extends Controller
         session(['variavel_global_bateria' => $tensao1]);
 
 
-        // verificar o nivel de tensao e ligar alerta se for < que 5
-       // dd($tensao1);
-        if ($tensao1 < 5)
-            $response1 = Http::get('192.168.1.1/onledYellow');//ligar os leds amarelos
-        if($tensao1 > 5)
-             $response1 = Http::get('192.168.1.1/offledYellow');//desligar os leds amarelos
-
-        if ($response1->successful()) {
-        // Processar a resposta
-        $resposta1 = $response1->json();
-        // Faça algo com os dados
-        }
-            if(isset($response1))
-            {
-              // dd($resposta1);
-            }
+       
         //apenas qui
         $casas = Electrodomesticos::select('created_at', 'energia_consumida')
         ->orderBy('created_at', 'desc')
@@ -196,5 +181,41 @@ class PainelController extends Controller
          return view("sgmer.ajuda", ["perguntas" => $perguntas]);
      }
 
+     public function getNivelDeTensao()
+     {
+        // requisitar a api do esp
+        
+        $response = Http::get('192.168.1.1/put_tensao');
+            if ($response->successful()) {
+            $resposta = $response->json();
+            }
+            if(isset($response))
+            {
+              $tensao1 = $resposta['valor'];
+            }
+            else  $tensao1= 0.0;
+
+
+             // verificar o nivel de tensao e ligar alerta se for < que 5
+       // dd($tensao1);
+        if ($tensao1 < 2.7)
+        $response1 = Http::get('192.168.1.1/onledYellow');//ligar os leds amarelos
+        if($tensao1 > 2.7)
+                $response1 = Http::get('192.168.1.1/offledYellow');//desligar os leds amarelos
+        if ($response1->successful()) {
+        // Processar a resposta
+         $resposta1 = $response1->json();
+        // Faça algo com os dados
+        }
+
+
+            $data = [
+                'time' => 0,
+                'value' => $tensao1 // Valor aleatório entre 1 e 10
+            ];
+
+ 
+         return response()->json($data);
+     }
      
 }

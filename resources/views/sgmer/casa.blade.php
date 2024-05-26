@@ -15,10 +15,6 @@
   <button id="button2" class="btn btn-primary btn-sm" style="width: 200px;height:50px; border-radius:8px;">OFF</button>
   </form>
 
-  <form method="GET" id="form3" action="192.168.1.1/onledYellow">
-    <label for="">Status do Circuito 2</label>
-    <button id="button3" class="btn btn-primary btn-sm" style="width: 200px;height:50px; border-radius:8px;">OFF</button>
-    </form>
 </div>
 
 <script>
@@ -48,9 +44,6 @@ button1.addEventListener('click', function() {
 
   button2.addEventListener('click', function() {
     toggleButton(button2);
-  });
-  button3.addEventListener('click', function() {
-    toggleButton(button3);
   });
 
     document.getElementById("form1").addEventListener("submit", function(event) {
@@ -85,21 +78,6 @@ button1.addEventListener('click', function() {
         xhr.send(); // Envia a requisição
     });
 
-    document.getElementById("form3").addEventListener("submit", function(event) {
-        event.preventDefault(); // Impede o envio do formulário padrão
-        
-        // Faça a requisição AJAX
-        var xhr = new XMLHttpRequest();
-      xhr.open("GET", "http://192.168.1.1/onledYellow", true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhr.onload = function () {
-           if (xhr.readyState == 4 && xhr.status == 200) {
-                // Redireciona para a página atual
-                window.location.href = window.location.href;
-           }
-        };
-        xhr.send(); // Envia a requisição
-    });
 
 </script>
 @endsection

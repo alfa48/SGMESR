@@ -518,7 +518,7 @@ input[name="accordion-checkbox"]:checked + .accordion-header + .accordion-body {
           @if(isset($tensao))
 
               <progress class="progress" value="{{ $tensao }}" max="18"></progress>
-             <span>{{ number_format((($tensao * 100) / 18), 1) }}%</span>
+              <div id="data-container">Carregando...</div><span>%</span>
              <img src="{{ asset("imagem/icons8-bateria-android-l-50.png")  }}" alt="">
 
            @else 
@@ -554,6 +554,27 @@ input[name="accordion-checkbox"]:checked + .accordion-header + .accordion-body {
     </section>
   </div>
   <script src="{{ asset("js/chart.min.js") }}" charset="utf-8"></script>
+  
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+            function fetchData() {
+                fetch('/getNivelDeTensao')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        document.getElementById('data-container').innerText = `Value: ${((data.value * 100) / 18).toFixed(1)}`;
+                    })
+                    .catch(error => console.error('Erro:', error));
+            }
+
+            // Chama a função fetchData a cada 5 segundos
+            setInterval(fetchData, 2000);
+
+            // Chama fetchData imediatamente para não esperar os 5 segundos iniciais
+            fetchData();
+        });
+  
+  </script>
  
   @if(isset($chart))
     {!! $chart->script() !!}
