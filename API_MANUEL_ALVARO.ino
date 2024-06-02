@@ -25,10 +25,11 @@ bool LEDYellowStatus = LOW;
 const int sensorPin = 34;  // Pino analógico do ESP32 conectado ao sensor de tensão da bateria
 float voltage = 0;
 
-const int sensorPinPainel = 34;  // Pino analógico do ESP32 conectado ao sensor de tensão do painel
+const int sensorPinPainel = 35
+;  // Pino analógico do ESP32 conectado ao sensor de tensão do painel
 float voltagePainel = 0;
 
-const int buzzerPin = 8;  // Pino digital do ESP32 conectado ao buzzer
+const int buzzerPin = 36;  // Pino digital do ESP32 conectado ao buzzer
 bool buzzerStatus = LOW;
 
 void setup() {
