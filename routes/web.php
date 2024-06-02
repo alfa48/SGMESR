@@ -22,6 +22,7 @@ Route::get('/user/chart', "PainelController@showChart");
 
 Route::get('/chart', [ChartController::class, 'index']);
 Route::get('/getNivelDeTensao', [PainelController::class, 'getNivelDeTensao']);
+Route::get('/getNivelDeTensaoPainel', [PainelController::class, 'getNivelDeTensaoPainel']);
 Route::prefix("/painel-control")->group(function(){
 
     Route::get("/dashboard", [PainelController::class, "dashboard"])->name("dashboard");

@@ -33,6 +33,15 @@ class AppServiceProvider extends ServiceProvider
                 //scatter
                 //doughnut
             });
+
+            $this->app->singleton('variavel_global_painel', function ($app) {
+                return 0; // Valor padrão
+                //polarArea
+                //line
+                //bar
+                //scatter
+                //doughnut
+            });
     }
      /**
      * Obtenha o valor da variável global.

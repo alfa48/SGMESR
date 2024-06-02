@@ -91,10 +91,12 @@ void loop() {
   server.handleClient();
 
     int sensorValue = analogRead(sensorPin);
-    voltage = sensorValue * (25.0 / 4095.0);  // Convertendo o valor lido para a tensão (0-25V)
+    float voltagem = sensorValue * (3.3 / 4095.0);
+    voltage = voltagem * (25.0 / 4095.0);  // Convertendo o valor lido para a tensão (0-25V)
 
     int sensorValuePainel = analogRead(sensorPinPainel);
-    voltagePainel = sensorValuePainel * (25.0 / 4095.0);  // Convertendo o valor lido para a tensão (0-25V)
+    float voltagemPainel = sensorValuePainel * (3.3 / 4095.0);
+    voltagePainel = voltagemPainel * (25.0 / 4095.0);  // Convertendo o valor lido para a tensão (0-25V)
 
 
   if(LED1status)

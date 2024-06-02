@@ -492,8 +492,9 @@ input[name="accordion-checkbox"]:checked + .accordion-header + .accordion-body {
       <div class="main-skills" >
         <div class="card" style= "color:#4a229e;">
           <h3 style=" color:#4a229e;">Enrgia produzida</h3>
-          @if(isset($painel))
-            <span> {{ $painel->energia_produzida }}</span>
+          @if(isset($tensao))
+            <div id="data-container-tensao1">Carregando...</div><span>%</span>
+            <img src="{{ asset("imagem/icons8-painel-solar-32.png")  }}" alt="">
           @else
           <img src="{{ asset("imagem/icons8-painel-solar-32.png")  }}" alt="">
               <span > OFF</span>
@@ -563,6 +564,24 @@ input[name="accordion-checkbox"]:checked + .accordion-header + .accordion-body {
                     .then(data => {
                         console.log(data);
                         document.getElementById('data-container').innerText = `Value: ${((data.value * 100) / 18).toFixed(1)}`;
+                    })
+                    .catch(error => console.error('Erro:', error));
+            }
+
+            // Chama a função fetchData a cada 5 segundos
+            setInterval(fetchData, 2000);
+
+            // Chama fetchData imediatamente para não esperar os 5 segundos iniciais
+            fetchData();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            function fetchData() {
+                fetch('/getNivelDeTensaoPainel')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        document.getElementById('data-container-tensao1').innerText = `Value: ${((data.value * 100) / 12).toFixed(1)}`;
                     })
                     .catch(error => console.error('Erro:', error));
             }
