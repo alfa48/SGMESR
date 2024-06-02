@@ -460,7 +460,7 @@ input[name="accordion-checkbox"]:checked + .accordion-header + .accordion-body {
       </a>
       <a href="{{ route("login") }}" class="logout" class="item_menu">
         <img src="{{ asset("imagem/icons8-logout-arredondado-50.png")  }}" alt="">
-        <span class="nav-item" style="font-family: 'Times New Roman', Times, serif;">Log out</span>
+        <span class="nav-item" style="font-family: 'Times New Roman', Times, serif;"> Log out</span>
       </a>
 
       </ul>
@@ -489,8 +489,8 @@ input[name="accordion-checkbox"]:checked + .accordion-header + .accordion-body {
 
       <!-- CARDS -->
 
-      <div class="main-skills">
-        <div class="card">
+      <div class="main-skills" >
+        <div class="card" style= "color:#4a229e;">
           <h3 style=" color:#4a229e;">Enrgia produzida</h3>
           @if(isset($painel))
             <span> {{ $painel->energia_produzida }}</span>
