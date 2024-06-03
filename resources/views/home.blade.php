@@ -420,15 +420,7 @@ input[name="accordion-checkbox"]:checked + .accordion-header + .accordion-body {
     }
     
 
-.notification-count {
-    position: absolute;
-    top: -10px;
-    left: -15px;
-    background-color: transparent;
-    border-radius: 50%;
-    padding: 2px 6px;
-    border: 1px solid rgb(218, 255, 10); /* Optional: add a border to enhance visibility */
-}
+.
 </style>
 <body>
   <div class="container">
@@ -446,7 +438,6 @@ input[name="accordion-checkbox"]:checked + .accordion-header + .accordion-body {
         <a href="{{ route('alerta') }}" class="item_menu notification-icon">
           <img src="{{ asset('imagem/icons8-sirene-50.png') }}" alt="">
           <span class="nav-item" style="font-family: 'Times New Roman', Times, serif;">Alerta</span><br>
-          <span style="color:red; font-size: 14px;font-family: 'Times New Roman', Times, serif " class="notification-count">5</span>
       </a>
         <a href="{{ route("ajuda") }}" class="item_menu">
           <img src="{{ asset("imagem/icons8-ajuda-50.png")  }}" alt=""> 
@@ -492,7 +483,7 @@ input[name="accordion-checkbox"]:checked + .accordion-header + .accordion-body {
       <div class="main-skills" >
         <div class="card" style= "color:#4a229e;">
           <h3 style=" color:#4a229e;">Enrgia produzida</h3>
-          @if(isset($tensao))
+          @if(isset($tensao1))
             <div id="data-container-tensao1">Carregando...</div><span>%</span>
             <img src="{{ asset("imagem/icons8-painel-solar-32.png")  }}" alt="">
           @else
@@ -524,7 +515,7 @@ input[name="accordion-checkbox"]:checked + .accordion-header + .accordion-body {
 
            @else 
            <img src="{{ asset("imagem/icons8-bateria-android-l-50.png")  }}" alt="">
-           <progress class="progress" value="25" max="100"></progress>
+           <progress class="progress" value="00" max="100"></progress>
            <span > OFF</span>
   
 
@@ -569,7 +560,7 @@ input[name="accordion-checkbox"]:checked + .accordion-header + .accordion-body {
             }
 
             // Chama a função fetchData a cada 5 segundos
-            setInterval(fetchData, 2000);
+            setInterval(fetchData, 3000);
 
             // Chama fetchData imediatamente para não esperar os 5 segundos iniciais
             fetchData();
@@ -587,7 +578,7 @@ input[name="accordion-checkbox"]:checked + .accordion-header + .accordion-body {
             }
 
             // Chama a função fetchData a cada 5 segundos
-            setInterval(fetchData, 2000);
+            setInterval(fetchData, 3000);
 
             // Chama fetchData imediatamente para não esperar os 5 segundos iniciais
             fetchData();

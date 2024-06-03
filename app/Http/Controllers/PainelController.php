@@ -14,6 +14,7 @@ use App\Models\Paineis;
 use App\Providers\AppServiceProvider;
 use Carbon\Carbon;
 use DateTime;
+use Illuminate\Console\View\Components\Alert;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -37,7 +38,7 @@ class PainelController extends Controller
         $cargaDaBateria = session('variavel_global_bateria');
         $cargaDoPainel = session('variavel_global_painel');
 
-        $alertas = Alerta::orderBy('created_at')->paginate(5);
+        $alertas = Alerta::orderBy('created_at', 'desc')->paginate(3);
         return view("sgmer.alerta",['painel' => $painel, 'casa' => $casa, 'bateria' => $bateria, 'alertas' => $alertas, 'tensao' => $cargaDaBateria, 'tensao1' => $cargaDoPainel]);
     }
 
@@ -84,29 +85,21 @@ class PainelController extends Controller
         $bateria = Bateria::whereDate('created_at', $dataHoje)->first();
 
         // requisitar a api do esp
-        $response = Http::get('192.168.1.1/put_tensao');
+        //$response = Http::get('192.168.1.1/put_tensao');
         // requisitar a api do esp  tensao do painel
-        $response1 = Http::get('192.168.1.1/put_tensaoPainel');
+        //$response1 = Http::get('192.168.1.1/put_tensaoPainel');
             // Verificar se a requisição foi bem-sucedida
-    if ($response->successful()) 
-        $resposta = $response->json();
-    if ($response1->successful()) 
-        $resposta1 = $response1->json();
+    //if ($response->successful()) 
+      //  $resposta = $response->json();
+    //if ($response1->successful()) 
+      //  $resposta1 = $response1->json();
 
 
 
 
-       // dd($resposta['valor']);
-        $tensao1 = 5.0;
-        $tensao2 = 5.0;
-        if(isset($response))
-           $tensao1 = $resposta['valor'];
-        session(['variavel_global_bateria' => $tensao1]);
-        if(isset($response1))
-            $tensao2 = $resposta1['valor'];
-        session(['variavel_global_painel' => $tensao2]);
-
-
+       // buscar e nao salvar;
+        $tensao2 =  session('variavel_global_painel');
+        $tensao1 = session('variavel_global_bateria');
        
         //apenas qui
         $casas = Electrodomesticos::select('created_at', 'energia_consumida')
@@ -122,7 +115,7 @@ class PainelController extends Controller
         // criar o grafico
         $this->chart->labels($labels);
        // $this->chart->labels(['segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado', 'domingo']);
-        $this->chart->dataset('energia produzida', $tipoGrafico, $datasets);
+        $this->chart->dataset('energia consumida', $tipoGrafico, $datasets);
 
         
         return view("home", ['painel' => $painel,
@@ -137,6 +130,9 @@ class PainelController extends Controller
 
         //AQUI
         $value = $request->input('garfico'); // Obtendo valor do request
+        $valueSimulacaoBateriaFraca = $request->input('simulacao'); // Obtendo valor do request
+        if(isset($valueSimulacaoBateriaFraca))
+            session(['variavel_global_simular_bateria_fraca' => $valueSimulacaoBateriaFraca]);  
         // Setando a variável global no container
         if (isset($value))
         {
@@ -190,17 +186,22 @@ class PainelController extends Controller
      public function getNivelDeTensao()
      {
         // requisitar a api do esp
-        
-        $response = Http::get('192.168.1.1/put_tensao');
-            if ($response->successful()) {
-            $resposta = $response->json();
+        $modoSimulation = session('variavel_global_simular_bateria_fraca');
+        if ($modoSimulation == "simulation-battery-down")
+        {
+            $tensao1 = 1.5;
+        }else{
+                $response = Http::get('192.168.1.1/put_tensao');
+                if ($response->successful()) {
+                $resposta = $response->json();
+                }
+                if(isset($response))
+                {
+                    $tensao1 = $resposta['valor'];
+                    session(['variavel_global_bateria' => $tensao1]);//salvo
+                }
+                else  $tensao1= 0.0;
             }
-            if(isset($response))
-            {
-              $tensao1 = $resposta['valor'];
-            }
-            else  $tensao1= 0.0;
-
 
              // verificar o nivel de tensao e ligar alerta se for < que 5
        // dd($tensao1);
@@ -208,12 +209,18 @@ class PainelController extends Controller
         {
             $response1 = Http::get('192.168.1.1/onledYellow');//ligar os leds amarelos
             $response1 = Http::get('192.168.1.1/setOn_buzzer');//ligar o buzzer
-            Alerta::created([
-                'tipo' => 'alerta',
-                'mensagem' => 'O nível da bateria está baixo! recarregue a bateria',
-            ]);//add no db criar um alerta  
+            $tresMinutosAtras = Carbon::now()->subMinutes(2);
+            $existeMensagem = Alerta::where("created_at", ">=", $tresMinutosAtras)->exists();
+            
+            if(!$existeMensagem)
+            {
+                Alerta::create([
+                    'tipo' => 'alerta',
+                    'mensagem' => 'O nível da bateria está baixo! recarregue a bateria',
+                ]);//add no db criar um alerta  
+            }
         }
-        if($tensao1 > 2.7)
+        else if($tensao1 > 2.7)
         {
             $response1 = Http::get('192.168.1.1/offledYellow');//desligar os leds amarelos
             $response1 = Http::get('192.168.1.1/setOff_buzzer');//desligar o buzzer  
@@ -243,7 +250,10 @@ class PainelController extends Controller
             $resposta = $response->json();
             }
             if(isset($response))
+            {
               $tensao = $resposta['valor'];
+              session(['variavel_global_painel' => $tensao]);// salvado
+            }
             else  $tensao = 0.0;
 
 
@@ -253,12 +263,18 @@ class PainelController extends Controller
         {
            // $response1 = Http::get('192.168.1.1/onledYellow');//ligar o led vermelho
 
-            Alerta::created([
-                'tipo' => 'alerta',
-                'mensagem' => 'Painel desativado! ou fornece uma tensão muito baixa, verifique o painel',
-            ]);//add no db criar um alerta  
+           $tresMinutosAtras = Carbon::now()->subMinutes(2);
+           $existeMensagem = Alerta::where("created_at", ">=", $tresMinutosAtras)->exists();
+           if(!$existeMensagem)
+           {
+                Alerta::create([
+                    'tipo' => 'alerta',
+                    'mensagem' => 'Painel desativado! ou fornece uma tensão muito baixa, verifique o painel',
+                ]);//add no db criar um alerta  
+            }
+            
         }
-        if($tensao > 2.7)
+        else if($tensao > 2.7)
         {
            // $response1 = Http::get('192.168.1.1/offledYellow');//desligar o leds vermelho 
         }

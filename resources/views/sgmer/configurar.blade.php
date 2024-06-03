@@ -52,9 +52,9 @@
 
         <div class="input-group">
             <label for="operation_mode"><img src="{{ asset("imagem/icons8-configurações-3-50.png")  }}" alt=""></img>Modo de Operação: </label>
-            <select id="operation_mode" name="operation_mode">
+            <select id="operation_mode" name="simulacao">
                 <option value="economy">Economia de Energia</option>
-                <option value="performance">Máximo Desempenho</option>
+                <option value="simulation-battery-down">Simulaçao de baixa carga</option>
             </select>
 
         </div>
